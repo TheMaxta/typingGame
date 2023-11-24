@@ -49,4 +49,63 @@ document.getElementById('wordInput').addEventListener('input', (event) => {
     }
 });
 
+
+// ... (existing JavaScript code) ...
+
+let time = 60; // Timer in seconds
+let timerRunning = false;
+let wordCount = 0;
+
+function startTimer() {
+    if (!timerRunning) {
+        timerRunning = true;
+        let timerInterval = setInterval(() => {
+            if (time <= 0) {
+                clearInterval(timerInterval);
+                endGame();
+            } else {
+                time--;
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+}
+
+function updateTimerDisplay() {
+    const timerElement = document.getElementById('timer');
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+    timerElement.textContent = `Time: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+}
+
+function updateWordCount() {
+    const wordCountElement = document.getElementById('wordCount');
+    wordCountElement.textContent = `Words: ${wordCount}`;
+}
+
+function endGame() {
+    // Disable input
+    document.getElementById('wordInput').disabled = true;
+    // Highlight the final word count
+    document.getElementById('wordCount').style.color = '#FF0000';
+    // You could also display a message to the user, save the score, etc.
+}
+
+document.getElementById('wordInput').addEventListener('input', (event) => {
+    // ... (existing input logic) ...
+
+    if (trimmedInput === currentWord) {
+        // ... (existing logic) ...
+        wordCount++; // Increment word count
+        updateWordCount(); // Update the displayed word count
+    }
+
+    // ... (rest of the input event logic) ...
+});
+
+// Initial calls to set up the game
 updateWordStream();
+updateTimerDisplay();
+updateWordCount();
+startTimer(); // Call this function when you are ready to start the timer
+
