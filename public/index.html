@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Typing Game</a>
+        </div>
+    </nav>
+
+    <div class="jumbotron jumbotron-fluid text-center">
+        <div class="container">
+            <h1 class="display-4">Improve Your Typing Skills</h1>
+            <p class="lead">Type the words as they appear</p>
+        </div>
+    </div>
+
+    <div class="container game-container">
+        <div id="wordStream" class="text-center my-4">
+            <span id="word1" class="word"></span>
+            <span id="word2" class="word"></span>
+            <span id="word3" class="word"></span>
+            <span id="word4" class="word"></span>
+            <span id="word5" class="word"></span>
+        </div>
+        <input type="text" id="wordInput" class="form-control form-control-lg" autofocus>
+    </div>
+
+    <footer class="footer bg-dark text-white text-center py-3">
+        <div class="container">
+            <p>© 2023 Typing Game</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
