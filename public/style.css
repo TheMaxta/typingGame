@@ -1,8 +1,25 @@
-body {
-    padding-top: 50px;
-    min-height: 100vh;
+body, html {
+    height: 100%;
+    background-color: #1a1a1a; /* Dark background */
+    color: #fff; /* White text color */
+    font-family: 'Arial', sans-serif; /* Arial font for a modern look */
+}
+
+.container {
     display: flex;
     flex-direction: column;
+    height: 100%;
+}
+
+.navbar {
+    background-color: #333; /* Darker background for navbar */
+}
+
+.jumbotron {
+    background-color: #333; /* Darker background for jumbotron */
+    color: #fff;
+    padding: 2rem 1rem;
+    margin-bottom: 0; /* Remove margin to collapse with the word stream */
 }
 
 .game-container {
@@ -10,41 +27,56 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 #wordStream {
-    font-size: 24px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+    background-color: #262626; /* Slightly lighter dark background for the word stream */
+    border-radius: 4px;
+    padding: 10px;
     margin-bottom: 20px;
+    display: inline-block; /* Center the word stream block */
+}
+
+.word {
+    display: inline-block;
+    margin-right: 10px;
 }
 
 .highlight {
-    border-bottom-color: #007bff; /* Bootstrap primary color */
+    background-color: #4CAF50; /* Highlight color */
+    border-radius: 4px;
+    padding: 3px 6px;
+}
+
+#wordInput {
+    border: 2px solid #4CAF50; /* Border color */
+    background-color: #333;
+    color: #fff;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    width: 50%; /* Set a fixed width */
+    text-align: center;
 }
 
 .footer {
-    margin-top: auto;
-}
-.word {
-    display: inline-block;
-    margin: 0 10px;
-    padding: 5px;
-    border-bottom: 2px solid transparent; /* To ensure consistent spacing */
+    background-color: #333; /* Darker background for footer */
+    color: #fff;
+    padding: 1rem 0;
 }
 
+/* Add styles for the timer and control buttons if necessary */
+.timer {
+    color: #4CAF50; /* Timer color */
+}
+/* 
+.controls {
+}
+*/
 .correct {
     color: green;
 }
 
 .incorrect {
     color: red;
-}
-
-.highlight {
-    background-color: #f8f9fa; /* Light background for the first word */
-    padding: 3px 6px;
-    border-radius: 4px;
 }
