@@ -1,111 +1,120 @@
-const words = ['example', 'game', 'typing', 'nodejs', 'javascript', 'bootstrap', 'random', 'words', 'practice', 'stream', 'challenge', 'code', 'learn', 'fun', 'keyboard'];
-let currentWordIndex = 0;
+import { updateWordStream, updateCurrentWordDisplay, updateTimerDisplay, updateWordCountDisplay, endGame } from './uiHandler.js';
 
-function getRandomWord() {
-    return words[Math.floor(Math.random() * words.length)];
-}
+// // Global variables
+// const words = [
+//     'example', 'game', 'typing', 'nodejs', 'javascript',
+//     'bootstrap', 'random', 'words', 'practice', 'stream',
+//     'challenge', 'code', 'learn', 'fun', 'keyboard'
+// ];
 
-function updateWordStream() {
-    for (let i = 1; i <= 5; i++) {
-        const wordElement = document.getElementById(`word${i}`);
-        wordElement.innerText = words[(currentWordIndex + i - 1) % words.length];
-        wordElement.classList.remove('highlight');
-    }
-    document.getElementById('word1').classList.add('highlight'); // Highlight the first word
-}
+// Function to fetch words from the server
+async function fetchWordsFromServer(userName = 'Max') {
+    try {
+        const response = await fetch('http://localhost:3000/generateWords', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userName })
+        });
 
-function updateCurrentWordDisplay(inputValue) {
-    const currentWordElement = document.getElementById('word1');
-    const currentWord = words[currentWordIndex % words.length];
-    let formattedWord = '';
-    let firstMistakeFound = false;
-
-    for (let i = 0; i < currentWord.length; i++) {
-        let colorClass = '';
-        if (i < inputValue.length) {
-            if (!firstMistakeFound && inputValue[i] !== currentWord[i]) {
-                firstMistakeFound = true;
-            }
-            colorClass = firstMistakeFound ? 'incorrect' : 'correct';
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
 
-        formattedWord += `<span class="${colorClass}">${currentWord[i]}</span>`;
+        const data = await response.json();
+        return data.words;
+    } catch (error) {
+        console.error('Error fetching words:', error);
+        return [];
     }
-
-    currentWordElement.innerHTML = formattedWord;
 }
 
 
-document.getElementById('wordInput').addEventListener('input', (event) => {
-    const trimmedInput = event.target.value.trimStart(); // Trim leading spaces
-    const currentWord = words[currentWordIndex % words.length];
 
-    if (trimmedInput === currentWord) {
-        event.target.value = ''; // Clear the input
-        currentWordIndex++; // Move to the next word
-        updateWordStream();
-    } else {
-        updateCurrentWordDisplay(trimmedInput);
-    }
-});
+async function setupGame() {
+    try {
+        // Fetch words from the server and proceed with setup only after fetching
+        const words = await fetchWordsFromServer();
+        
+
+        let currentStream = [...words]; // Use predefined words directly
+        let time = 60;
+        let timerRunning = false;
+        let wordCount = 0;
+        let timerInterval;
 
 
-// ... (existing JavaScript code) ...
+        // Function to start the game timer
+        function startGame() {
+            if (!timerRunning) {
+                resetTimer();
+                timerInterval = setInterval(updateTimer, 1000); // Update every second
+            }
+        }
 
-let time = 60; // Timer in seconds
-let timerRunning = false;
-let wordCount = 0;
+        // Function to reset the game timer
+        function resetTimer() {
+            time = 60;
+            timerRunning = true;
+        }
 
-function startTimer() {
-    if (!timerRunning) {
-        timerRunning = true;
-        let timerInterval = setInterval(() => {
+        // Function to update the game timer
+        function updateTimer() {
             if (time <= 0) {
                 clearInterval(timerInterval);
                 endGame();
             } else {
                 time--;
-                updateTimerDisplay();
+                updateTimerDisplay(time);
             }
-        }, 1000);
+        }
+
+        // Function to format time for display
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        // Event listener for user input
+        document.getElementById('wordInput').addEventListener('input', handleInputEvent);
+
+        // Function to handle user input
+        function handleInputEvent(event) {
+            const trimmedInput = event.target.value.trimStart();
+            const currentWord = currentStream[0] || '';
+
+            if (!timerRunning) startGame();
+
+            if (trimmedInput === currentWord) {
+                wordCount++;
+                currentStream.shift();
+                updateGameUI();
+                event.target.value = '';
+            } else {
+                updateCurrentWordDisplay(currentWord, trimmedInput);
+            }
+        }
+
+        // Function to update the game UI
+        function updateGameUI() {
+            updateWordStream(currentStream);
+            updateWordCountDisplay(wordCount);
+        }
+
+        // Function to initialize the game
+        function initializeGame() {
+            updateGameUI();
+        }
+
+        // Event listener for user input
+        document.getElementById('wordInput').addEventListener('input', (event) => handleInputEvent(event, currentStream, timerRunning, wordCount));
+
+        // Initialize the game UI
+        initializeGame();
+    } catch (error) {
+        console.error('Error setting up the game:', error);
     }
 }
 
-function updateTimerDisplay() {
-    const timerElement = document.getElementById('timer');
-    let minutes = Math.floor(time / 60);
-    let seconds = time % 60;
-    timerElement.textContent = `Time: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-}
-
-function updateWordCount() {
-    const wordCountElement = document.getElementById('wordCount');
-    wordCountElement.textContent = `Words: ${wordCount}`;
-}
-
-function endGame() {
-    // Disable input
-    document.getElementById('wordInput').disabled = true;
-    // Highlight the final word count
-    document.getElementById('wordCount').style.color = '#FF0000';
-    // You could also display a message to the user, save the score, etc.
-}
-
-document.getElementById('wordInput').addEventListener('input', (event) => {
-    // ... (existing input logic) ...
-
-    if (trimmedInput === currentWord) {
-        // ... (existing logic) ...
-        wordCount++; // Increment word count
-        updateWordCount(); // Update the displayed word count
-    }
-
-    // ... (rest of the input event logic) ...
-});
-
-// Initial calls to set up the game
-updateWordStream();
-updateTimerDisplay();
-updateWordCount();
-startTimer(); // Call this function when you are ready to start the timer
-
+// Call setupGame to start the game setup
+setupGame();
